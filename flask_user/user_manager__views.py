@@ -10,7 +10,7 @@ try:
 except ImportError:
     from urllib import quote, unquote          # Python 2
 
-from flask import current_app, flash, redirect, render_template, request, url_for
+from flask import current_app, flash, Markup, redirect, render_template, request, url_for
 from flask_login import current_user, login_user, logout_user
 
 from .decorators import login_required
@@ -606,10 +606,10 @@ class UserManager__Views(object):
     def unauthenticated_view(self):
         """ Prepare a Flash message and redirect to USER_UNAUTHENTICATED_ENDPOINT"""
         # Prepare Flash message
-        url = request.url
-        flash(_("You must be signed in to access '%(url)s'.", url=url), 'error')
+        flash(_("You must be signed in to access this."), 'error')
 
         # Redirect to USER_UNAUTHENTICATED_ENDPOINT
+        url = request.url
         safe_next_url = self.make_safe_url(url)
         return redirect(self._endpoint_url(self.USER_UNAUTHENTICATED_ENDPOINT)+'?next='+quote(safe_next_url))
 
@@ -617,8 +617,7 @@ class UserManager__Views(object):
     def unauthorized_view(self):
         """ Prepare a Flash message and redirect to USER_UNAUTHORIZED_ENDPOINT"""
         # Prepare Flash message
-        url = request.script_root + request.path
-        flash(_("You do not have permission to access '%(url)s'.", url=url), 'error')
+        flash(_("You do not have permission to access this."), 'error')
 
         # Redirect to USER_UNAUTHORIZED_ENDPOINT
         return redirect(self._endpoint_url(self.USER_UNAUTHORIZED_ENDPOINT))
@@ -676,7 +675,7 @@ class UserManager__Views(object):
                 and not current_app.user_manager.USER_ALLOW_LOGIN_WITHOUT_CONFIRMED_EMAIL \
                 and not self.db_manager.user_has_confirmed_email(user):
             url = url_for('user.resend_email_confirmation')
-            flash(_('Your email address has not yet been confirmed. Check your email Inbox and Spam folders for the confirmation email or <a href="%(url)s">Re-send confirmation email</a>.', url=url), 'error')
+            flash(Markup(_('Your email address has not yet been confirmed. Check your email for the confirmation email or <a href="%(url)s">re-send the confirmation email</a>.', url=url)), 'error')
             return redirect(url_for('user.login'))
 
         # Use Flask-Login to sign in user
