@@ -181,7 +181,7 @@ class UserManager__Views(object):
         signals.user_confirmed_email.send(current_app._get_current_object(), user=user)
 
         # Flash a system message
-        flash(_('Your email has been confirmed.'), 'success')
+        flash(_('Your email has been confirmed. Please sign in to access your account.'), 'success')
 
         # Auto-login after confirm or redirect to login page
         safe_next_url = self._get_safe_next_url('next', self.USER_AFTER_CONFIRM_ENDPOINT)
