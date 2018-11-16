@@ -243,6 +243,10 @@ class UserManager(UserManager__Settings, UserManager__Utils, UserManager__Views)
             if ch.isupper(): uppers += 1
             if ch.isdigit(): digits += 1
 
+        # Prevent passwords longer than 70 characters because bcrypto uses at most 72 characters.
+        if password_length > 70:
+            raise ValidationError(_('Password must be at most 70 characters long'))
+
         # Password must have one lowercase letter, one uppercase letter and one digit
         is_valid = password_length >= 6 and lowers and uppers and digits
         if not is_valid:
